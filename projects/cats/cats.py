@@ -37,7 +37,14 @@ def pick(paragraphs: list[str], select, k: int) -> str:
     ''
     """
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
+    qualified, paragraphs_len = [], len(paragraphs)
+    for i in range(paragraphs_len):
+        if select(paragraphs[i]):
+            qualified += [paragraphs[i]]
+    qualified_len = len(qualified)
+    if qualified_len == 0 or k >= qualified_len:
+        return ''
+    return qualified[k]    
     # END PROBLEM 1
 
 
@@ -57,7 +64,14 @@ def about(keywords: list[str]):
     assert all([lower(x) == x for x in keywords]), "keywords should be lowercase."
 
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    def f(paragraph: str):
+        paragraph_list = split(lower(remove_punctuation(paragraph)))
+        for keyword in keywords:
+            for word in paragraph_list:
+                if keyword == word:
+                    return True
+        return False
+    return f
     # END PROBLEM 2
 
 
@@ -87,7 +101,22 @@ def accuracy(typed: str, source: str) -> float:
     typed_words = split(typed)
     source_words = split(source)
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    typed_count, source_count, correct_count = len(typed_words), len(source_words), 0
+    
+    if typed_count == 0:
+        if source_count == 0:
+            return 100.0
+        else:
+            return 0.0
+        
+    if source_count == 0 and typed_count:
+        return 0.0
+    
+    for i in range(source_count):
+        if i < typed_count and source_words[i] == typed_words[i]:  # short-circuiting protection
+            correct_count += 1
+    
+    return correct_count / typed_count * 100
     # END PROBLEM 3
 
 
@@ -105,7 +134,8 @@ def wpm(typed: str, elapsed: int) -> float:
     """
     assert elapsed > 0, "Elapsed time must be positive"
     # BEGIN PROBLEM 4
-    "*** YOUR CODE HERE ***"
+    word_count = len(typed) / 5
+    return word_count / elapsed * 60
     # END PROBLEM 4
 
 
@@ -166,7 +196,16 @@ def autocorrect(typed_word: str, word_list: list[str], diff_function, limit: int
     'testing'
     """
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    if typed_word in word_list:
+        return typed_word
+    
+    best_word = min(word_list, key = lambda word: (diff_function(typed_word, word, limit), word_list.index(word)))
+    # key: a function which returns (diff, index)
+    # Tuples are compared first by diff (ascending), then by index (ascending) on tie
+
+    if diff_function(typed_word, best_word, limit) > limit:
+        return typed_word
+    return best_word
     # END PROBLEM 5
 
 
@@ -193,7 +232,16 @@ def furry_fixes(typed: str, source: str, limit: int) -> int:
     5
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    if limit == 0 and typed != source:
+        return limit + 1
+    if not typed:
+        return len(source)
+    if not source:
+        return len(typed)
+    if typed[0] == source[0]:
+        return furry_fixes(typed[1:], source[1:], limit)
+    else:
+        return furry_fixes(typed[1:], source[1:], limit - 1) + 1
     # END PROBLEM 6
 
 
@@ -214,24 +262,22 @@ def minimum_mewtations(typed: str, source: str, limit: int) -> int:
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-    assert False, 'Remove this line'
-    if ___________: # Base cases should go here, you may add more base cases as needed.
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    # Recursive cases should go below here
-    if ___________: # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
+    # BEGIN PROBLEM 7
+    if limit == 0 and typed != source:
+        return limit + 1
+    if not typed:
+        return len(source)
+    if not source:
+        return len(typed)
+    if typed[0] == source[0]:
+        return minimum_mewtations(typed[1:], source[1:], limit) 
     else:
-        add = ... # Fill in these lines
-        remove = ...
-        substitute = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
+        add = minimum_mewtations(source[0] + typed, source, limit - 1)
+        remove = minimum_mewtations(typed[1:], source, limit - 1)
+        substitute = minimum_mewtations(typed[1:], source[1:], limit - 1)
+        return min(add, remove, substitute) + 1
+    # END PROBLEM 7
+        
 
 # Ignore the line below
 minimum_mewtations = count(minimum_mewtations)

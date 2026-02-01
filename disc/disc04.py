@@ -55,5 +55,25 @@ def sums(n, m):
         return [sums_to_zero] # Return a list of all the ways to sum to zero
     result = []
     for k in range(1, m + 1):
-        result = result + [ for rest in ___ if rest == [] or ___ ]
+        result = result + [[k] + rest for rest in sums(n-k, m) if rest == [] or rest[0] != k]
     return result
+
+
+def fit(total, n):
+    """Return whether there are n positive perfect squares that sums to total.
+
+    >>> [fit(4, 1), fit(4, 2), fit(4, 3), fit(4, 4)]  # 1*(2*2) for n=1; 4*(1*1) for n=4
+    [True, False, False, True]
+    >>> [fit(12, n) for n in range(3, 8)]  # 3*(2*2), 3*(1*1)+3*3, 4*(1*1)+2*(2*2)
+    [True, True, False, True, False]
+    >>> [fit(32, 2), fit(32, 3), fit(32, 4), fit(32, 5)] # 2*(4*4), 3*(1*1)+2*2+5*5
+    [True, False, False, True]
+    """
+    def f(total, n, k):
+        if total == n * k * k:
+            return True
+        elif total < k * k:
+            return False
+        else:
+            return f(total - k * k, n - 1, k) or f(total, n, k + 1)
+    return f(total, n, 1)

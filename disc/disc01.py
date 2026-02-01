@@ -107,7 +107,7 @@ def has_digit(n, k):
     False
     """
     assert k >= 0 and k < 10
-    while n != 0:
+    while n:
         if n % 10 == k:
             return True
         else:

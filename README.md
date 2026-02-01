@@ -1,4 +1,4 @@
-# CS61A 25fa
+# CS61A-fa25
 
 This repository contains my work and solutions for UC Berkeley's **CS 61A: Structure and Interpretation of Computer Programs**.
 
